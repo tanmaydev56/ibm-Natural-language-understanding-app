@@ -8,36 +8,45 @@ export const PutDataTextAnalysis = async ({
   emotion,
   keywords,
 }) => {
-  const result = await db.query(
-    `INSERT INTO text_analysis (
-      input_text, 
-      sentiment_label, 
-      sentiment_score, 
-      emotion_anger, 
-      emotion_disgust, 
-      emotion_fear, 
-      emotion_joy, 
-      emotion_sadness, 
-      keywords
-    ) VALUES (
-      $1, $2, $3, $4, $5, $6, $7, $8, $9
-    ) RETURNING *`,
-    [
-      inputText,
-      sentimentLabel,
-      sentimentScore,
-      emotion?.anger,
-      emotion?.disgust,
-      emotion?.fear,
-      emotion?.joy,
-      emotion?.sadness,
-      JSON.stringify(keywords),
-    ]
-  );
-
-  return result[0]; // For neon, use `result[0]`, not `rows[0]`
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const result = await client.query(
+        `INSERT INTO text_analysis (
+          input_text, 
+          sentiment_label, 
+          sentiment_score, 
+          emotion_anger, 
+          emotion_disgust, 
+          emotion_fear, 
+          emotion_joy, 
+          emotion_sadness, 
+          keywords
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8, $9
+        ) RETURNING *`,
+        [
+          inputText,
+          sentimentLabel,
+          sentimentScore,
+          emotion?.anger,
+          emotion?.disgust, 
+          emotion?.fear,
+          emotion?.joy,
+          emotion?.sadness,
+          JSON.stringify(keywords),
+        ]
+      );
+      await client.query('COMMIT');
+      return result.rows[0]; // For neon, use `result[0]`, not `rows[0]`
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Database Error:', error);
+        throw error; // Re-throw the error for handling in the calling function
+    }   finally {
+        client.release();
+        }
 };
-
 export async function PutDataResumeAnalysis(data) {
   const client = await pool.connect();
   
