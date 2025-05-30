@@ -1,6 +1,7 @@
 // app/api/analyze/route.js
-const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-understanding/v1');
-const { IamAuthenticator } = require('ibm-watson/auth');
+
+import NaturalLanguageUnderstandingV1 from 'ibm-watson/natural-language-understanding/v1';
+import { IamAuthenticator } from 'ibm-watson/auth';
 
 const nlu = new NaturalLanguageUnderstandingV1({
   version: '2021-08-01',
