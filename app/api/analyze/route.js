@@ -2,6 +2,7 @@
 
 import NaturalLanguageUnderstandingV1 from 'ibm-watson/natural-language-understanding/v1';
 import { IamAuthenticator } from 'ibm-watson/auth';
+import { PutDataTextAnalysis } from '../../../actions/db.actions';
 
 const nlu = new NaturalLanguageUnderstandingV1({
   version: '2021-08-01',
@@ -34,7 +35,18 @@ export async function POST(request) {
         }
       }
     });
-
+    const {sentiment, emotion, keywords} = analysis.result;
+    await PutDataTextAnalysis({
+      inputText: text,
+      sentimentLabel: sentiment.document.label,
+      sentimentScore: sentiment.document.score,
+      emotion: emotion.document.emotion,
+      keywords: keywords.map(keyword => ({
+        text: keyword.text,
+        sentiment: keyword.sentiment.label,
+        emotion: keyword.emotion
+      }))
+    })
     return Response.json(analysis.result);
     
   } catch (error) {
