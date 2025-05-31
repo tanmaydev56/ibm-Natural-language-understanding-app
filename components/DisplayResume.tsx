@@ -1,6 +1,7 @@
 import { GetResume } from '@/actions/db.actions';
 import React from 'react';
-import RecommendationsPanel from './RecomendationsPannel';
+
+import Link from 'next/link';
 
 interface ResumeAnalysis {
   id: number;
@@ -32,105 +33,61 @@ const DisplayResume = async () => {
   resumes.sort((a, b) => new Date(b.analyzed_at).getTime() - new Date(a.analyzed_at).getTime());
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
+    <div className="min-h-screen  bg-gray-50 py-8 px-4">
+      <div className="w-full mx-auto">
+       
+
+        <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-gray-900">Resume Analysis Dashboard</h2>
-          <p className="mt-2 text-lg text-gray-600">View and compare your analyzed resumes</p>
+          <p className="text-lg text-gray-600">Click on a resume to view full analysis</p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
-          {resumes.map((resume) => (
-            <div key={resume.id} className="bg-white rounded-xl shadow-md overflow-hidden">
-              <div className="p-6 space-y-6">
-
-                {/* Header */}
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-800">{resume.filename}</h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                      Analyzed on {new Date(resume.analyzed_at).toLocaleString()}
-                    </p>
-                  </div>
-                  <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    resume.sentiment_label === 'positive' ? 'bg-green-100 text-green-800' :
-                    resume.sentiment_label === 'negative' ? 'bg-red-100 text-red-800' :
-                    'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {resume.sentiment_label} ({resume.sentiment_score > 0 ? '+' : ''}{resume.sentiment_score.toFixed(2)})
-                  </div>
-                </div>
-
-                {/* Original Text */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                    <h4 className="font-semibold text-gray-800 flex items-center">
-                      <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      Original Content
-                    </h4>
-                  </div>
-                  <div className="p-4 h-64 overflow-y-auto">
-                    <div className="prose prose-sm max-w-none text-gray-700">
-                      {resume.input_text.split('\n').map((paragraph, index) => (
-                        <p key={index} className="mb-3 last:mb-0">
-                          {paragraph.trim() === '' ? <br /> : paragraph}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Emotion Analysis */}
-                <div>
-                  <h4 className="font-medium text-gray-700 mb-2">Emotion Analysis</h4>
-                  <div className="space-y-3">
-                    {Object.entries(resume.emotion_data).map(([emotion, score]) => (
-                      <div key={emotion} className="flex items-center">
-                        <span className="w-24 capitalize">{emotion}</span>
-                        <div className="flex-1 bg-gray-200 rounded-full h-2.5">
-                          <div
-                            className="bg-blue-500 h-2.5 rounded-full"
-                            style={{ width: `${score * 100}%` }}
-                          />
-                        </div>
-                        <span className="ml-2 text-sm text-gray-500 w-10 text-right">
-                          {(score * 100).toFixed(1)}%
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Keywords and Recommendations */}
-                <div>
-                  <h4 className="font-medium text-gray-700 mb-2">Key Insights</h4>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {resume.keywords.slice(0, 5).map((keyword, i) => (
-                      <span
-                        key={i}
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          keyword.sentiment === 'positive' ? 'bg-green-100 text-green-800' :
-                          keyword.sentiment === 'negative' ? 'bg-red-100 text-red-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }`}
-                      >
-                        {keyword.text}
-                      </span>
-                    ))}
-                  </div>
-
-                  {resume.recommendations && (
-                    <RecommendationsPanel recommendations={resume.recommendations} />
-                  )}
-                </div>
-
-              </div>
-            </div>
-          ))}
+        {resumes.length === 0 ? (
+          <div className="text-center text-gray-500">No resumes found. Upload one to get started.</div>
+        ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+  {resumes.map((resume) => (
+    <Link key={resume.id} href={`/resume-analyzer/${resume.id}`}>
+      <div className="group cursor-pointer rounded-2xl bg-white shadow-sm hover:shadow-lg hover:scale-105 transition-transform duration-300 p-6 border border-gray-100">
+        <div className="flex items-start justify-between">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-lg font-semibold text-gray-800 truncate max-w-[220px] sm:max-w-[280px] lg:max-w-[320px]">
+              {resume.filename}
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">
+              Analyzed on {new Date(resume.analyzed_at).toLocaleDateString()}
+            </p>
+          </div>
+          <div className="flex items-center pl-2 text-green-500">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 opacity-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4" />
+            </svg>
+          </div>
         </div>
+
+        <div
+          className={`mt-4 inline-block rounded-full px-3 py-1 text-sm font-medium ${
+            resume.sentiment_label === 'positive'
+              ? 'bg-green-100 text-green-700'
+              : resume.sentiment_label === 'negative'
+              ? 'bg-red-100 text-red-700'
+              : 'bg-yellow-100 text-yellow-700'
+          }`}
+        >
+          {resume.sentiment_label.charAt(0).toUpperCase() + resume.sentiment_label.slice(1)} ({resume.sentiment_score > 0 ? '+' : ''}
+          {resume.sentiment_score.toFixed(2)})
+        </div>
+      </div>
+    </Link>
+  ))}
+</div>
+
+
+        )}
+      </div>
+    </div>
 
         {resumes.length === 0 && (
           <div className="text-center py-12">

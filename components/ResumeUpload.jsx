@@ -52,7 +52,7 @@ export default function ResumeUpload() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="w-full mx-auto p-6">
       <form onSubmit={handleUpload} className="space-y-4 p-6 bg-white rounded-lg shadow-md mb-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Resume Analyzer</h2>
         

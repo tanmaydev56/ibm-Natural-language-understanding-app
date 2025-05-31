@@ -37,7 +37,7 @@ const AnalysisResultPannel = ({ analysisResults }:{ analysisResults: AnalysisRes
        {analysisResults && (
             <div className="p-6 bg-white rounded-lg shadow-md">
               <h3 className="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
-                Technical Analysis
+                Technical Analysis(By IBM Watson NLP ) 
               </h3>
               
               {/* Sentiment Card */}
