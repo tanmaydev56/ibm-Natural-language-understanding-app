@@ -1,12 +1,18 @@
 "use client";
 
+import { useState } from 'react';
+
 interface RecommendationsPanelProps {
   recommendations: string;
 }
 
 const RecommendationsPanel = ({ recommendations }: RecommendationsPanelProps) => {
+   const [expanded, setExpanded] = useState(false);
+  const [maxHeight, setMaxHeight] = useState('400px'); // Initial max height
+
   if (!recommendations) return null;
 
+ 
   // Parse recommendations into structured sections
   const parseRecommendations = (text: string) => {
     const sections: { title?: string; items: string[] }[] = [];
@@ -16,7 +22,6 @@ const RecommendationsPanel = ({ recommendations }: RecommendationsPanelProps) =>
       const trimmed = line.trim();
       if (!trimmed) return;
       
-      // Detect section headers (lines ending with :)
       if (trimmed.endsWith(':')) {
         if (currentSection.items.length > 0 || currentSection.title) {
           sections.push(currentSection);
@@ -25,13 +30,9 @@ const RecommendationsPanel = ({ recommendations }: RecommendationsPanelProps) =>
           title: trimmed.replace(':', '').trim(),
           items: []
         };
-      } 
-      // Detect bullet points
-      else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+      } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
         currentSection.items.push(trimmed.substring(2).trim());
-      }
-      // Regular paragraphs
-      else {
+      } else {
         currentSection.items.push(trimmed);
       }
     });
@@ -44,6 +45,11 @@ const RecommendationsPanel = ({ recommendations }: RecommendationsPanelProps) =>
   };
 
   const recommendationSections = parseRecommendations(recommendations);
+
+  const toggleExpand = () => {
+    setExpanded(!expanded);
+    setMaxHeight(expanded ? '400px' : 'none');
+  };
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md border border-gray-100">
@@ -61,7 +67,10 @@ const RecommendationsPanel = ({ recommendations }: RecommendationsPanelProps) =>
         </span>
       </div>
       
-      <div className="space-y-6">
+      <div 
+        className="space-y-6 overflow-hidden transition-all duration-300"
+        style={{ maxHeight: maxHeight }}
+      >
         {recommendationSections.map((section, sectionIndex) => (
           <div key={sectionIndex} className="space-y-3">
             {section.title && (
@@ -71,35 +80,47 @@ const RecommendationsPanel = ({ recommendations }: RecommendationsPanelProps) =>
               </h4>
             )}
             <ul className="space-y-3 pl-5">
-              {section.items.map((item, itemIndex) => {
-                // Check if item contains bold markers (**text**)
-                if (item.includes('**')) {
-                  const parts = item.split('**');
-                  return (
-                    <li key={itemIndex} className="flex items-start">
-                      <span className="text-blue-500 font-bold mr-2 mt-1.5">•</span>
-                      <p className="text-gray-700">
-                        {parts.map((part, i) => 
-                          i % 2 === 1 ? (
-                            <span key={i} className="font-bold">{part}</span>
-                          ) : (
-                            part
-                          )
-                        )}
-                      </p>
-                    </li>
-                  );
-                }
-                return (
-                  <li key={itemIndex} className="flex items-start">
-                    <span className="text-blue-500 font-bold mr-2 mt-1.5">•</span>
-                    <p className="text-gray-700 font-medium">{item}</p>
-                  </li>
-                );
-              })}
+              {section.items.map((item, itemIndex) => (
+                <li key={itemIndex} className="flex items-start">
+                  <span className="text-blue-500 font-bold mr-2 mt-1.5">•</span>
+                  <p className="text-gray-700">
+                    {item.split('**').map((part, i) => 
+                      i % 2 === 1 ? (
+                        <span key={i} className="font-bold">{part}</span>
+                      ) : (
+                        part
+                      )
+                    )}
+                  </p>
+                </li>
+              ))}
             </ul>
           </div>
         ))}
+      </div>
+
+      {/* Read More/Less Button */}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={toggleExpand}
+          className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors flex items-center"
+        >
+          {expanded ? (
+            <>
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
+              Show Less
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+              Read More
+            </>
+          )}
+        </button>
       </div>
 
       <div className="mt-8 p-5 bg-blue-50 rounded-lg border border-blue-100">
@@ -110,39 +131,35 @@ const RecommendationsPanel = ({ recommendations }: RecommendationsPanelProps) =>
           Action Plan
         </h4>
         <ul className="space-y-3">
-          <li className="flex items-start p-3 bg-white rounded-lg border border-gray-200">
-            <span className="flex-shrink-0 p-1 bg-blue-100 text-blue-600 rounded-full mr-3">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </span>
-            <div>
-              <h5 className="font-bold text-gray-800">Review Recommendations</h5>
-              <p className="text-sm text-gray-600 font-medium mt-1">Carefully examine each suggestion above</p>
-            </div>
-          </li>
-          <li className="flex items-start p-3 bg-white rounded-lg border border-gray-200">
-            <span className="flex-shrink-0 p-1 bg-blue-100 text-blue-600 rounded-full mr-3">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            </span>
-            <div>
-              <h5 className="font-bold text-gray-800">Implement Changes</h5>
-              <p className="text-sm text-gray-600 font-medium mt-1">Update your resume with the suggested improvements</p>
-            </div>
-          </li>
-          <li className="flex items-start p-3 bg-white rounded-lg border border-gray-200">
-            <span className="flex-shrink-0 p-1 bg-blue-100 text-blue-600 rounded-full mr-3">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-              </svg>
-            </span>
-            <div>
-              <h5 className="font-bold text-gray-800">Re-upload & Verify</h5>
-              <p className="text-sm text-gray-600 font-medium mt-1">Submit your improved resume for another analysis</p>
-            </div>
-          </li>
+          {[
+            {
+              icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />,
+              title: "Review Recommendations",
+              description: "Carefully examine each suggestion above"
+            },
+            {
+              icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />,
+              title: "Implement Changes",
+              description: "Update your resume with the suggested improvements"
+            },
+            {
+              icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />,
+              title: "Re-upload & Verify",
+              description: "Submit your improved resume for another analysis"
+            }
+          ].map((item, index) => (
+            <li key={index} className="flex items-start p-3 bg-white rounded-lg border border-gray-200">
+              <span className="flex-shrink-0 p-1 bg-blue-100 text-blue-600 rounded-full mr-3">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {item.icon}
+                </svg>
+              </span>
+              <div>
+                <h5 className="font-bold text-gray-800">{item.title}</h5>
+                <p className="text-sm text-gray-600 font-medium mt-1">{item.description}</p>
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

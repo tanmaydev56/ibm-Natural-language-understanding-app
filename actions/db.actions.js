@@ -50,10 +50,6 @@ export const PutDataTextAnalysis = async ({
         }
 };
 
-
-
-
-
 export async function PutDataResumeAnalysis(data) {
   const client = await pool.connect();
   
@@ -95,3 +91,17 @@ export async function PutDataResumeAnalysis(data) {
     client.release();
   }
 }
+
+export async function GetResume(){
+  const client = await pool.connect();
+  try {
+    const result = await client.query('SELECT * FROM resume_analysis');
+    return result.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
