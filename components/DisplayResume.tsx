@@ -33,7 +33,7 @@ const DisplayResume = async () => {
   resumes.sort((a, b) => new Date(b.analyzed_at).getTime() - new Date(a.analyzed_at).getTime());
 
   return (
-    <div className="min-h-screen  bg-gray-50 py-8 px-4">
+    <div className="min-h-screen  bg-gray-50 py-8 px-6">
       <div className="w-full mx-auto">
        
 
