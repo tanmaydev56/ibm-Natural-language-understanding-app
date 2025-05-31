@@ -2,13 +2,17 @@ import { NextResponse } from 'next/server';
 import mammoth from 'mammoth';
 import { IamAuthenticator } from 'ibm-watson/auth';
 import NaturalLanguageUnderstandingV1 from 'ibm-watson/natural-language-understanding/v1';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { PutDataResumeAnalysis } from '@/actions/db.actions';
 
 export async function POST(request) {
   try {
-    // Verify IBM Watson credentials
+    // Verify all required credentials
     if (!process.env.IBM_API_KEY || !process.env.IBM_URL) {
       throw new Error('IBM Watson service not configured');
+    }
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('Gemini API key not configured');
     }
 
     const formData = await request.formData();
@@ -21,7 +25,7 @@ export async function POST(request) {
       );
     }
 
-    // Enhanced file type validation
+    // File type validation
     const fileName = file.name.toLowerCase();
     if (!fileName.endsWith('.docx')) {
       return NextResponse.json(
@@ -70,6 +74,30 @@ export async function POST(request) {
       },
     });
 
+    // Initialize Gemini AI
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    // Generate recommendations with Gemini
+    const prompt = `
+      You are a professional resume reviewer. Analyze the following resume content and provide specific, actionable recommendations for improvement. Focus on:
+
+      1. Content structure and organization
+      2. Keyword optimization for ATS systems
+      3. Impactful language and action verbs
+      4. Quantifiable achievements
+      5. Professional tone and clarity
+      6. Any missing sections that could strengthen the resume
+
+      Provide your recommendations in clear bullet points with examples where helpful.
+
+      Resume Content:
+      ${textContent.substring(0, 10000)} // Limiting to first 10k chars to avoid token limits
+    `;
+
+    const geminiResult = await model.generateContent(prompt);
+    const recommendations = await geminiResult.response.text();
+
     // Prepare data for database
     const dbData = {
       filename: file.name,
@@ -77,7 +105,9 @@ export async function POST(request) {
       sentimentLabel: analysisResults.result.sentiment?.document?.label || null,
       sentimentScore: analysisResults.result.sentiment?.document?.score || null,
       emotion: analysisResults.result.emotion?.document?.emotion || null,
-      keywords: analysisResults.result.keywords || []
+      keywords: analysisResults.result.keywords || [],
+      recommendations: recommendations,
+      analysisData: analysisResults.result
     };
 
     // Save to database
@@ -85,6 +115,7 @@ export async function POST(request) {
 
     return NextResponse.json({
       insights: analysisResults.result,
+      recommendations: recommendations,
       message: 'DOCX resume analyzed successfully!'
     }, { status: 200 });
 

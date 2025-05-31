@@ -1,5 +1,7 @@
 // utils/putDataTextAnalysis.js
 import pool from "@/lib/db"
+
+
 // Pass these as parameters when calling
 export const PutDataTextAnalysis = async ({
   inputText,
@@ -47,6 +49,11 @@ export const PutDataTextAnalysis = async ({
         client.release();
         }
 };
+
+
+
+
+
 export async function PutDataResumeAnalysis(data) {
   const client = await pool.connect();
   
@@ -57,22 +64,32 @@ export async function PutDataResumeAnalysis(data) {
       INSERT INTO resume_analysis (
         filename,
         input_text,
-        analysis_data,
+        sentiment_label,
+        sentiment_score,
+        emotion_data,
+        keywords,
         recommendations,
-        analyzed_at
-      ) VALUES ($1, $2, $3, $4, NOW())
+        analysis_data
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING id
     `;
     
-    await client.query(insertQuery, [
+    const result = await client.query(insertQuery, [
       data.filename,
       data.inputText,
-      JSON.stringify(data.analysis),
-      data.recommendations
+      data.sentimentLabel,
+      data.sentimentScore,
+      data.emotion ? JSON.stringify(data.emotion) : null,
+      data.keywords ? JSON.stringify(data.keywords) : null,
+      data.recommendations,
+      JSON.stringify(data.analysisData)
     ]);
     
     await client.query('COMMIT');
+    return result.rows[0].id;
   } catch (error) {
     await client.query('ROLLBACK');
+    console.error('Database Error:', error);
     throw error;
   } finally {
     client.release();

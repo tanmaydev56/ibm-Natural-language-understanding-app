@@ -33,7 +33,8 @@ export async function POST(request) {
           sentiment: true,
           emotion: true
         }
-      }
+      },
+      language: 'en'
     });
     const {sentiment, emotion, keywords} = analysis.result;
     await PutDataTextAnalysis({
