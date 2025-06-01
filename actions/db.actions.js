@@ -92,18 +92,20 @@ export async function PutDataResumeAnalysis(data) {
   }
 }
 
-export async function GetResume(){
+export async function GetResume() {
   const client = await pool.connect();
   try {
     const result = await client.query('SELECT * FROM resume_analysis');
+    console.log('Fetched resumes:', result.rows.length); // ✅ Add this line
     return result.rows;
   } catch (error) {
-    console.error('Database Error:', error);
+    console.error('Database Error:', error); // ⛔ This will show in Vercel logs
     throw error;
   } finally {
     client.release();
   }
 }
+
 
 export async function GetResumeById(id) {
   const client = await pool.connect();
