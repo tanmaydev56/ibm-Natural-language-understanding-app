@@ -16,7 +16,7 @@ export async function POST(request) {
     }
 
     const formData = await request.formData();
-    const file = formData.get('file');
+    const file = formData.get('file') ;
 
     if (!file) {
       return NextResponse.json(
@@ -66,11 +66,31 @@ export async function POST(request) {
     const analysisResults = await naturalLanguageUnderstanding.analyze({
       text: textContent,
       features: {
-        keywords: { limit: 10 },
+        keywords: { 
+          limit: 10,
+          sentiment: true,
+          emotion: true
+        },
         concepts: { limit: 5 },
         entities: { limit: 5 },
-        sentiment: {},
-        emotion: {},
+        sentiment: {
+          targets: [
+            'experience',
+            'skills',
+            'education',
+            'achievements',
+            'summary'
+          ]
+        },
+        emotion: {
+          targets: [
+            'experience',
+            'skills',
+            'education',
+            'achievements',
+            'summary'
+          ]
+        },
       },
     });
 
@@ -78,25 +98,67 @@ export async function POST(request) {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // Generate recommendations with Gemini
+    // Enhanced prompt for structured output
     const prompt = `
-      You are a professional resume reviewer. Analyze the following resume content and provide specific, actionable recommendations for improvement. Focus on:
+      You are a professional resume reviewer. Analyze the following resume content and provide:
 
+      ---
+      OVERALL RATING: [score]/10 - [Excellent/Good/Fair/Poor]
+      [Detailed explanation of the overall rating in 1-2 sentences]
+
+      KEY STRENGTHS:
+      - [Strength 1]
+      - [Strength 2]
+      - [Strength 3]
+
+      AREAS FOR IMPROVEMENT:
+      - [Area 1 with specific suggestions]
+      - [Area 2 with specific suggestions]
+      - [Area 3 with specific suggestions]
+
+      CONTENT OPTIMIZATION:
+      - [Recommendation 1 with examples]
+      - [Recommendation 2 with examples]
+      - [Recommendation 3 with examples]
+
+      ATS OPTIMIZATION:
+      - [Keyword suggestion 1]
+      - [Keyword suggestion 2]
+      - [Keyword suggestion 3]
+
+      FORMATTING SUGGESTIONS:
+      - [Formatting tip 1]
+      - [Formatting tip 2]
+
+      ACTIONABLE NEXT STEPS:
+      - [Action 1]
+      - [Action 2]
+      ---
+
+      Focus on:
       1. Content structure and organization
       2. Keyword optimization for ATS systems
       3. Impactful language and action verbs
       4. Quantifiable achievements
       5. Professional tone and clarity
-      6. Any missing sections that could strengthen the resume
+      6. Missing sections that could strengthen the resume
 
-      Provide your recommendations in clear bullet points with examples where helpful.
+      Provide your recommendations in clear bullet points with **bolded** important terms.
 
       Resume Content:
-      ${textContent.substring(0, 10000)} // Limiting to first 10k chars to avoid token limits
+      ${textContent.substring(0, 10000)} // Limiting to first 10k chars
     `;
 
     const geminiResult = await model.generateContent(prompt);
-    const recommendations = await geminiResult.response.text();
+    const recommendations = (await geminiResult.response.text()).trim();
+
+    // Extract rating from Gemini response
+    const ratingMatch = recommendations.match(/OVERALL RATING: (\d+(\.\d+)?)\/10 - (\w+)\n(.*?)(?=\n\n|$)/s);
+    const rating = ratingMatch ? {
+      score: parseFloat(ratingMatch[1]),
+      label: ratingMatch[3],
+      description: ratingMatch[4].trim()
+    } : null;
 
     // Prepare data for database
     const dbData = {
@@ -105,9 +167,10 @@ export async function POST(request) {
       sentimentLabel: analysisResults.result.sentiment?.document?.label || null,
       sentimentScore: analysisResults.result.sentiment?.document?.score || null,
       emotion: analysisResults.result.emotion?.document?.emotion || null,
-      keywords: analysisResults.result.keywords || [],
+      keywords: analysisResults.result.keywords?.map(k => k.text) || [],
       recommendations: recommendations,
-      analysisData: analysisResults.result
+      analysisData: analysisResults.result,
+      rating: rating
     };
 
     // Save to database
@@ -116,7 +179,8 @@ export async function POST(request) {
     return NextResponse.json({
       insights: analysisResults.result,
       recommendations: recommendations,
-      message: 'DOCX resume analyzed successfully!'
+      rating: rating,
+      message: 'Resume analyzed successfully!'
     }, { status: 200 });
 
   } catch (error) {

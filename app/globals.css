@@ -35,3 +35,18 @@ button:disabled {
   background: #f5f5f5;
   border-radius: 5px;
 }
+:root {
+  --tooltip-bg: theme('colors.gray.800');
+  --tooltip-text: theme('colors.white');
+  --tooltip-border: theme('colors.gray.600');
+}
+
+.bg-popover {
+  background-color: var(--tooltip-bg);
+}
+.text-popover-foreground {
+  color: var(--tooltip-text);
+}
+.border {
+  border-color: var(--tooltip-border);
+}

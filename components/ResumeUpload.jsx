@@ -101,7 +101,7 @@ export default function ResumeUpload() {
          <AnalysisResultPannel
           analysisResults={analysisResults} />
 
-          {/* Recommendations Panel */}
+         
           <RecomendationsPannel
          
            recommendations={recommendations} />
