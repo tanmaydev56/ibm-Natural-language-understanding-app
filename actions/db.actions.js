@@ -92,18 +92,7 @@ export async function PutDataResumeAnalysis(data) {
   }
 }
 
-export async function GetResume(){
-  const client = await pool.connect();
-  try {
-    const result = await client.query('SELECT * FROM resume_analysis');
-    return result.rows;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw error;
-  } finally {
-    client.release();
-  }
-}
+
 
 export async function GetResumeById(id) {
   const client = await pool.connect();

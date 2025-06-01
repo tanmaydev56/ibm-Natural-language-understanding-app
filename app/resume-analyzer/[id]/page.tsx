@@ -4,6 +4,8 @@ import { GetResumeById } from '@/actions/db.actions';
 import ResumeDetails from '@/components/ResumeDetails';
 import React from 'react';
 
+export const dynamic = "force-dynamic"; // 🚨 Force fresh server rendering every time
+
 interface PageProps {
   params: {
     id: string;
