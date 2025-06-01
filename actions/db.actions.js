@@ -110,7 +110,7 @@ export async function GetResumeById(id) {
   try {
     const result = await client.query('SELECT * FROM resume_analysis WHERE id = $1', [id]);
     if (result.rows.length === 0) {
-      throw new Error(`No resume found with ID ${id}`);
+      return null;
     }
     return result.rows[0];
   } catch (error) {

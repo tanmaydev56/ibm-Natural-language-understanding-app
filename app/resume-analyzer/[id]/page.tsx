@@ -1,4 +1,4 @@
-// No 'use client'
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { GetResumeById } from '@/actions/db.actions';
 import ResumeDetails from '@/components/ResumeDetails';
@@ -11,8 +11,12 @@ interface PageProps {
 }
 
 const ResumePage = async ({ params }: PageProps) => {
+  
   const resumeId = params.id;
   const resumeAnalysis = await GetResumeById(resumeId);
+  console.log("Fetching resume ID:", resumeId);
+console.log("Resume result:", resumeAnalysis);
+
 
   if (!resumeAnalysis) {
     return (
