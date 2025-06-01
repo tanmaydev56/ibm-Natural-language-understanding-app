@@ -1,10 +1,9 @@
-// No 'use client'
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { GetResumeById } from '@/actions/db.actions';
 import ResumeDetails from '@/components/ResumeDetails';
-import React from 'react';
-
-export const dynamic = "force-dynamic"; // 🚨 Force fresh server rendering every time
 
 interface PageProps {
   params: {
@@ -12,9 +11,33 @@ interface PageProps {
   };
 }
 
-const ResumePage = async ({ params }: PageProps) => {
+const ResumePage = ({ params }: PageProps) => {
   const resumeId = params.id;
-  const resumeAnalysis = await GetResumeById(resumeId);
+  const [resumeAnalysis, setResumeAnalysis] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchResume = async () => {
+      try {
+        const data = await GetResumeById(resumeId);
+        setResumeAnalysis(data);
+      } catch (error) {
+        console.error('Error fetching resume:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResume();
+  }, [resumeId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-xl text-gray-600">Loading...</p>
+      </div>
+    );
+  }
 
   if (!resumeAnalysis) {
     return (
