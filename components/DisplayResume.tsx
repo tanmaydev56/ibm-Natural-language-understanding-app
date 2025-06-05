@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'; // Prevent static caching
 
 import { GetResume } from '@/actions/db.actions';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 interface ResumeAnalysis {
   id: number;
@@ -10,6 +10,7 @@ interface ResumeAnalysis {
   sentiment_score: number;
   analyzed_at: string;
 }
+
 
 const SentimentCircularProgress = ({
   score,
@@ -22,6 +23,19 @@ const SentimentCircularProgress = ({
   const circumference = 2 * Math.PI * radius;
   const normalizedScore = Math.min(Math.abs(score), 1);
   const strokeDashoffset = circumference * (1 - normalizedScore);
+
+   const ScoreDisplay = ({ score, colors }: { score: number | null | undefined; colors: any }) => {
+    const displayValue = useMemo(() => {
+      if (score === null || score === undefined) return 'N/A';
+      return `${score > 0 ? '+' : ''}${score.toFixed(2)}`;
+    }, [score]);
+    
+    return (
+      <span className="text-2xl font-bold" style={{ color: colors.dark }}>
+        {displayValue}
+      </span>
+    );
+  };
 
   // Enhanced color scheme with better visual hierarchy
   const colorMap = {
@@ -41,9 +55,16 @@ const SentimentCircularProgress = ({
       dark: '#d97706'   // amber-600
     }
   };
+  
+const getSentimentColor = (label: string | null) => {
+  if (!label) return colorMap.neutral;
+  
+  const normalizedLabel = label.toLowerCase() as keyof typeof colorMap;
+  return colorMap[normalizedLabel] || colorMap.neutral;
+};
 
-  const colors = colorMap[label.toLowerCase() as keyof typeof colorMap] || colorMap.neutral;
-
+// Usage in your component:
+const colors = getSentimentColor(label);
   // Score interpretation text
   const getSentimentText = () => {
     if (label === 'positive') {
@@ -82,13 +103,9 @@ const SentimentCircularProgress = ({
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span 
-            className="text-2xl font-bold" 
-            style={{ color: colors.dark }}
-          >
-            {score > 0 ? '+' : ''}
-            {score.toFixed(2)}
-          </span>
+         <div className="absolute inset-0 flex items-center justify-center">
+        <ScoreDisplay score={score} colors={colors} />
+      </div>
         </div>
       </div>
       <div className="px-3 py-1 rounded-full" style={{ backgroundColor: colors.light }}>
@@ -238,5 +255,7 @@ const DisplayResume = async () => {
     </div>
   );
 };
+
+
 
 export default DisplayResume;
