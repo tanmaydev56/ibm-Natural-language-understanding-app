@@ -88,6 +88,7 @@ Run tests with:
 
 ```bash
 npm test
+```
 
 ##🔧 Technologies Used
 Frontend: Next.js, React, TypeScript
