@@ -5,7 +5,7 @@
 
 Transform resumes into powerful career opportunities with advanced NLP analysis. This application provides actionable feedback on resumes, interactive visualizations, and seamless database integration.
 
-![App Screenshot](https://via.placeholder.com/800x400?text=IBM+NLU+App+Screenshot)
+[image](https://github.com/user-attachments/assets/6ef4d5b0-dc91-4ac8-92d1-4aea191682f8)
 
 ---
 
@@ -90,10 +90,25 @@ Run tests with:
 npm test
 ```
 
-##🔧 Technologies Used
+## 🔧 Technologies Used
 Frontend: Next.js, React, TypeScript
 Styling: Tailwind CSS
 Database: PostgreSQL (Neon)
 NLP: IBM Watson Natural Language Understanding
 AI: Google Gemini API (optional features)
 Build Tools: npm
+
+## 🤝 Contributing
+Contributions are always welcome! Please follow these steps:
+
+Fork the project.
+Create your feature branch: git checkout -b feature/AmazingFeature
+Commit your changes: git commit -m 'Add some AmazingFeature'
+Push to the branch: git push origin feature/AmazingFeature
+Open a Pull Request.
+
+## 📧 Contact
+For questions or support, feel free to contact:
+
+Tanmay Sharma - tanmaysharma763@gmail.com
+Project Link: https://github.com/tanmaydev56/ibm-Natural-language-understanding-app
