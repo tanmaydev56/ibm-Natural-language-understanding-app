@@ -88,3 +88,11 @@ Run tests with:
 
 ```bash
 npm test
+
+##🔧 Technologies Used
+Frontend: Next.js, React, TypeScript
+Styling: Tailwind CSS
+Database: PostgreSQL (Neon)
+NLP: IBM Watson Natural Language Understanding
+AI: Google Gemini API (optional features)
+Build Tools: npm
