@@ -1,6 +1,3 @@
-Here's a polished GitHub README.md for your IBM Natural Language Understanding App:
-
-```markdown
 # IBM Natural Language Understanding App
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-49.9%25-blue)](https://www.typescriptlang.org/)
@@ -10,93 +7,84 @@ Transform resumes into powerful career opportunities with advanced NLP analysis.
 
 ![App Screenshot](https://via.placeholder.com/800x400?text=IBM+NLU+App+Screenshot)
 
+---
+
 ## ✨ Features
 
-- **Resume Analysis**: Upload and analyze DOCX resumes with actionable feedback
-- **Interactive Visualizations**: Dynamic sentiment charts and emotion radars
-- **Database Integration**: Efficient data storage and retrieval
-- **Responsive Design**: Built with Tailwind CSS for consistent styling
-- **Fast Development**: Next.js framework for rapid iterations
+* **Resume Analysis**: Upload and analyze DOCX resumes with actionable feedback.
+* **Interactive Visualizations**: Dynamic sentiment charts and emotion radars.
+* **Database Integration**: Efficient data storage and retrieval.
+* **Responsive Design**: Built with Tailwind CSS for consistent styling across devices.
+* **Fast Development**: Next.js framework for rapid iterations and optimized performance.
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js (v16 or later)
-- npm
-- IBM Cloud account (for NLU API)
-- Neon Database account (PostgreSQL)
-- Google Gemini API key (optional)
+Before you begin, ensure you have the following installed:
+
+* Node.js (v16 or later)
+* npm
+* An **IBM Cloud account** (for the Natural Language Understanding API).
+* A **Neon Database account** (for PostgreSQL).
+* A **Google Gemini API key** (optional, for additional AI features).
 
 ### Installation
-1. Clone the repository:
 
-git clone https://github.com/tanmaydev56/ibm-Natural-language-understanding-app
+1.  **Clone the repository**:
 
+    ```bash
+    git clone [https://github.com/tanmaydev56/ibm-Natural-language-understanding-app](https://github.com/tanmaydev56/ibm-Natural-language-understanding-app)
+    ```
 
-2. Navigate to project directory:
+2.  **Navigate to the project directory**:
 
-cd ibm-Natural-language-understanding-app
+    ```bash
+    cd ibm-Natural-language-understanding-app
+    ```
 
+3.  **Install dependencies**:
 
-3. Install dependencies:
+    ```bash
+    npm install
+    ```
 
-npm install
+4.  **Create a `.env` file** in the project root and add your API keys:
 
-
-4. Create a `.env` file with your API keys:
-
-IBM_API_KEY=your_ibm_api_key
-IBM_URL=your_ibm_service_url
-NEON_DATABASE_URL=your_neon_db_url
-GEMINI_API_KEY=your_gemini_api_key
-
+    ```
+    IBM_API_KEY=your_ibm_api_key
+    IBM_URL=your_ibm_service_url
+    NEON_DATABASE_URL=your_neon_db_url
+    GEMINI_API_KEY=your_gemini_api_key
+    ```
 
 ### Usage
 
-Start the development server:
-npm run dev
+1.  **Start the development server**:
 
+    ```bash
+    npm run dev
+    ```
 
-Build for production:
+2.  **Build for production**:
 
-npm run build
+    ```bash
+    npm run build
+    ```
 
+3.  **Start the production server**:
 
-Start production server:
+    ```bash
+    npm start
+    ```
 
-npm start
-
+---
 
 ## 🧪 Testing
 
 Run tests with:
+
 ```bash
 npm test
-```
-
-## 🔧 Technologies Used
-
-- **Frontend**: Next.js, React, TypeScript
-- **Styling**: Tailwind CSS
-- **Database**: PostgreSQL (Neon)
-- **NLP**: IBM Watson Natural Language Understanding
-- **AI**: Google Gemini API (optional features)
-- **Build Tools**: npm
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📧 Contact
-
-For questions or support, please contact:
-- [Your Name](mailto:tanmaysharma763@gmail.com)
-- Project Link: [https://github.com/tanmaydev56/ibm-Natural-language-understanding-app](https://github.com/tanmaydev56/ibm-Natural-language-understanding-app)
-```
-
