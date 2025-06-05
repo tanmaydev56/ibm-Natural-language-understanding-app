@@ -5,8 +5,7 @@
 
 Transform resumes into powerful career opportunities with advanced NLP analysis. This application provides actionable feedback on resumes, interactive visualizations, and seamless database integration.
 
-(https://github.com/user-attachments/assets/6ef4d5b0-dc91-4ac8-92d1-4aea191682f8)
-
+![App Screenshot](https://github.com/user-attachments/assets/6ef4d5b0-dc91-4ac8-92d1-4aea191682f8)
 ---
 
 ## ✨ Features
